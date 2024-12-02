@@ -209,6 +209,7 @@
           <span class="icon-label">Dashboard</span>
         </div>
 
+        <!-- Analytics Icon -->
         <div class="icon-container">
           <img
             src="{{ url_for('static', filename='images/Chart_Line.svg') }}"
@@ -216,6 +217,16 @@
             onclick="window.location.href='{{ url_for('analytics') }}'"
           />
           <span class="icon-label">Analytics</span>
+        </div>
+
+        <!-- Controls Icon -->
+        <div class="icon-container">
+          <img
+            src="{{ url_for('static', filename='images/Controls.svg') }}"
+            alt="Controls"
+            onclick="window.location.href='{{ url_for('controls') }}'"
+          />
+          <span class="icon-label">Controls</span>
         </div>
 
         <!-- Settings Icon -->
@@ -264,33 +275,6 @@
     </div>
 
     <script>
-      {% comment %} function getRandomValue(min, max) {
-        return (Math.random() * (max - min) + min).toFixed(2);
-      }
-
-      function updateSensorData() {
-        // Simulate random sensor values within realistic ranges
-        const humidity = getRandomValue(30, 70); // Humidity: 30% to 70%
-        const temperature = getRandomValue(15, 35); // Temperature: 15°C to 35°C
-        const pH = getRandomValue(5.5, 7.5); // pH: 5.5 to 7.5
-        const nitrogen = getRandomValue(10, 50); // Nitrogen: 10 mg/kg to 50 mg/kg
-        const phosphorus = getRandomValue(5, 20); // Phosphorus: 5 mg/kg to 20 mg/kg
-        const potassium = getRandomValue(1, 10); // Potassium: 1 g/kg to 10 g/kg
-
-        // Update the HTML with the simulated values
-        document.getElementById("humidity").textContent = humidity + "%";
-        document.getElementById("temperature").textContent = temperature + "°C";
-        document.getElementById("ph").textContent = pH;
-        document.getElementById("nitrogen").textContent = nitrogen + " mg/kg";
-        document.getElementById("phosphorus").textContent =
-          phosphorus + " mg/kg";
-        document.getElementById("potassium").textContent = potassium + " g/kg";
-      }
-
-      // Call the function to update sensor data initially and every 10 seconds
-      updateSensorData();
-      setInterval(updateSensorData, 10000); {% endcomment %}
-
       let sidebarOpen = false;
 
       function toggleSidebar() {

@@ -63,7 +63,6 @@
         width: 70%;
         bottom: 80px;
         left: 20px;
-        right: 20px;
         background-color: #224666;
         height: 70px;
         border-radius: 35px;
@@ -93,43 +92,46 @@
 
       /* Main content area */
       .content {
-        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
         padding: 40px 20px;
-        width: 80%;
+        width: calc(100% - 320px); /* Leave space for sidebar */
         max-width: 1200px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        transition: margin-left 0.3s;
+      }
+
+      /* Shift content when sidebar is open */
+      .content.sidebar-open {
+        margin-left: 320px;
       }
 
       h1 {
         font-family: "Dela Gothic One", sans-serif;
         font-size: 36px;
-        text-align: left;
         color: #b2cf43;
         margin-bottom: 30px;
       }
 
       .module {
         display: flex;
-        justify-content: space-between;
-        margin-bottom: 60px;
+        flex-direction: column;
+        align-items: center;
         border-bottom: 2px solid #b2cf43;
         padding-bottom: 40px;
+        margin-bottom: 40px;
+        text-align: center;
       }
 
       .module-title {
         font-family: "Dela Gothic One", sans-serif;
         font-size: 32px;
         color: #b2cf43;
-        flex: 1;
+        margin-bottom: 20px;
       }
 
       .module-description {
-        flex: 2;
         font-size: 20px;
         max-width: 700px;
-        text-align: right;
       }
     </style>
   </head>
@@ -137,7 +139,6 @@
     <!-- Sidebar -->
     <div id="sidebar" class="sidebar">
       <div class="sidebar-icons">
-        <!-- Dashboard Icon -->
         <div class="icon-container">
           <img
             src="{{ url_for('static', filename='images/Globe.svg') }}"
@@ -155,8 +156,14 @@
           />
           <span class="icon-label">Analytics</span>
         </div>
-
-        <!-- Settings Icon -->
+        <div class="icon-container">
+          <img
+            src="{{ url_for('static', filename='images/Controls.svg') }}"
+            alt="Controls"
+            onclick="window.location.href='{{ url_for('controls') }}'"
+          />
+          <span class="icon-label">Controls</span>
+        </div>
         <div class="icon-container">
           <img
             src="{{ url_for('static', filename='images/Settings.svg') }}"
@@ -165,8 +172,6 @@
           />
           <span class="icon-label">Settings</span>
         </div>
-
-        <!-- Help Icon -->
         <div class="icon-container">
           <img
             src="{{ url_for('static', filename='images/Circle_Help.svg') }}"
@@ -202,7 +207,7 @@
     </div>
 
     <!-- Content -->
-    <div class="content">
+    <div class="content" id="main-content">
       <!-- First Module -->
       <div class="module">
         <h1 class="module-title">Who are we?</h1>
@@ -245,14 +250,17 @@
       function toggleSidebar() {
         const sidebar = document.getElementById("sidebar");
         const sidebarBtn = document.getElementById("sidebar-toggle");
+        const mainContent = document.getElementById("main-content");
 
         if (!sidebarOpen) {
           sidebar.style.left = "0";
           sidebarBtn.classList.add("rotate");
+          mainContent.classList.add("sidebar-open");
           sidebarOpen = true;
         } else {
           sidebar.style.left = "-300px";
           sidebarBtn.classList.remove("rotate");
+          mainContent.classList.remove("sidebar-open");
           sidebarOpen = false;
         }
       }
