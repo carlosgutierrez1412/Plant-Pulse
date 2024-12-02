@@ -15,13 +15,77 @@
         font-family: Arial, sans-serif;
         background-color: #081826;
         color: #ffffff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
         overflow-x: hidden;
       }
-
+      h1 {
+        font-family: "Dela Gothic One", sans-serif;
+        color: #b2cf43;
+        margin-bottom: 50px;
+        font-size: 42px;
+        text-align: center;
+      }
+      .content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 30px;
+        transition: margin-left 0.3s ease;
+      }
+      .plant-form {
+        background-color: rgba(21, 44, 64, 0.85);
+        padding: 30px;
+        border-radius: 12px;
+        margin-top: 25px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+      .plant-form input,
+      .plant-form select {
+        width: 140px;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        background-color: #2e3a45;
+        color: white;
+        font-size: 16px;
+        text-align: center;
+      }
+      .button {
+        padding: 15px 30px;
+        border-radius: 8px;
+        border: none;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        font-size: 18px;
+        margin-top: 15px;
+      }
+      .delete-button {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        background-color: #ff6347;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 15px;
+      }
+      .result {
+        margin-top: 15px;
+        font-size: 20px;
+        color: #ffffff;
+        text-align: center;
+      }
       /* Sidebar styling */
       .sidebar {
         height: 100%;
@@ -34,7 +98,6 @@
         transition: 0.3s;
         padding-top: 60px;
       }
-
       .sidebar-icons {
         display: flex;
         flex-direction: column;
@@ -42,32 +105,27 @@
         margin-top: 30px;
         padding-left: 20px;
       }
-
       .icon-container {
         display: flex;
         align-items: center;
         margin: 20px 0;
       }
-
       .icon-container img {
         width: 40px;
         height: 40px;
         margin-right: 10px;
       }
-
       .icon-label {
         font-family: "Dela Gothic One", sans-serif;
         font-size: 18px;
         color: white;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
-
       .sidebar-bottom-container {
         position: absolute;
         width: 70%;
         bottom: 80px;
         left: 20px;
-        right: 20px;
         background-color: #224666;
         height: 70px;
         border-radius: 35px;
@@ -76,12 +134,10 @@
         align-items: center;
         padding: 0 20px;
       }
-
       .sidebar-bottom-container img {
         width: 40px;
         height: 40px;
       }
-
       .sidebar-btn {
         position: absolute;
         top: 20px;
@@ -90,55 +146,8 @@
         z-index: 10;
         transition: transform 0.3s;
       }
-
       .rotate {
         transform: rotate(180deg);
-      }
-
-      /* Main content */
-      .content {
-        margin-left: 100px;
-        padding: 20px;
-        width: calc(100% - 300px);
-      }
-
-      h1 {
-        font-family: "Dela Gothic One", sans-serif;
-        color: #b2cf43;
-        margin-bottom: 40px;
-        font-size: 36px; /* Adjust font size */
-      }
-
-      .analytics-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(21, 44, 64, 0.85);
-        padding: 30px;
-        border-radius: 10px;
-        max-width: 800px;
-        width: 100%;
-        color: #fff;
-        align-items: center;
-      }
-
-      .analytics-container p {
-        font-size: 18px;
-        text-align: center;
-      }
-
-      /* Chart Placeholder Styling */
-      .chart-placeholder {
-        background-color: #2e3a45;
-        width: 100%;
-        height: 400px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 10px;
-        color: #b2cf43;
-        margin-top: 20px;
       }
     </style>
   </head>
@@ -162,7 +171,14 @@
           />
           <span class="icon-label">Analytics</span>
         </div>
-
+        <div class="icon-container">
+          <img
+            src="{{ url_for('static', filename='images/Controls.svg') }}"
+            alt="Controls"
+            onclick="window.location.href='{{ url_for('controls') }}'"
+          />
+          <span class="icon-label">Controls</span>
+        </div>
         <div class="icon-container">
           <img
             src="{{ url_for('static', filename='images/Settings.svg') }}"
@@ -204,18 +220,11 @@
       />
     </div>
 
-    <!-- Content -->
-    <div class="content">
+    <!-- Main Content -->
+    <div class="content" id="main-content">
       <h1>Analytics</h1>
-      <div class="analytics-container">
-        <p>
-          Here, you can track and analyze the environmental data for your
-          plants.
-        </p>
-
-        <!-- Chart Placeholder -->
-        <div class="chart-placeholder">Placeholder for Charts</div>
-      </div>
+      <button class="button" id="create-plant-btn">Create Plant</button>
+      <div id="plant-forms"></div>
     </div>
 
     <script>
@@ -245,12 +254,258 @@
           credentials: "include",
         })
           .then((response) => {
-            if (response.redirected) {
-              window.location.href = response.url;
-            }
+            if (response.redirected) window.location.href = response.url;
           })
           .catch((error) => console.error("Logout error:", error));
       };
+
+      const plantRecommendations = {
+        Sunflower:
+          "Water sunflowers every 2-3 days to keep the soil consistently moist. Ensure they are exposed to direct sunlight for at least 6-8 hours daily. Maintain soil pH levels between 6 and 7.5, and ensure Potassium levels are between 150-250 for optimal growth.",
+        Tomato:
+          "Tomatoes require daily watering to prevent dry soil. Place them in a sunny spot with 6-10 hours of direct sunlight. Maintain soil pH between 5.8 and 6.5, and provide Nitrogen levels of 100-150 to support healthy foliage and fruit development.",
+        Basil:
+          "Water basil every 1-2 days, ensuring the soil stays moist but not waterlogged. Place in an area with indirect sunlight for 4-6 hours daily. Maintain a soil pH of 6-7 for vibrant, aromatic leaves.",
+        Rose: "Roses need deep watering once a week to promote strong root growth. Ensure they are in a sunny location with at least 6 hours of direct sunlight. Maintain a soil pH of 6-7 for optimal flowering.",
+        Lettuce:
+          "Water lettuce daily to keep the soil consistently moist. Place in partial sunlight for 4-6 hours. Maintain a pH of 6-7 and Nitrogen levels of 150-200 for tender, flavorful leaves.",
+        Cucumber:
+          "Water cucumbers every 2 days, ensuring even moisture. Position in full sun for at least 6-8 hours daily. Keep soil pH between 6 and 6.5, with Potassium levels of 200-300 for productive vines.",
+        Mint: "Water mint every 1-2 days, keeping the soil damp. Place in partial sunlight or indirect light for 4-6 hours. Maintain a pH of 6-7 for vigorous growth and aromatic leaves.",
+        Strawberry:
+          "Water strawberries daily to keep the soil evenly moist. Place in partial sunlight with at least 4-6 hours of light daily. Maintain pH between 5.5 and 6.5, and Potassium levels of 100-200 for sweet, healthy berries.",
+        Spinach:
+          "Water spinach daily, ensuring consistently moist soil. Position in indirect sunlight for 4-6 hours. Maintain a pH of 6.5-7.5 for nutrient-rich, tender leaves.",
+        Carrot:
+          "Water carrots 1-2 times per week, ensuring the soil is evenly moist. Place in full sunlight for 6-8 hours daily. Maintain a soil pH of 6-7 for straight, healthy roots.",
+        Peppers:
+          "Water peppers every 2 days to keep the soil evenly moist. Position in full sunlight for at least 6-8 hours daily. Maintain pH levels between 6 and 6.5, with Potassium levels of 150-250 to support vibrant growth.",
+        Parsley:
+          "Water parsley every 1-2 days to keep the soil consistently moist. Place in partial sunlight for 4-6 hours. Maintain a pH of 6-7 for lush, aromatic leaves.",
+        Zucchini:
+          "Water zucchini every 2 days to maintain evenly moist soil. Place in full sunlight for 6-8 hours daily. Maintain pH levels of 6-6.5, and Nitrogen levels of 100-150 for robust vines.",
+        Lavender:
+          "Water lavender weekly, allowing the soil to dry between waterings. Place in full sunlight for at least 6 hours daily. Maintain a pH of 6.5-7.5 for aromatic flowers.",
+        Cilantro:
+          "Water cilantro daily to keep the soil consistently moist. Place in partial sunlight for 4-6 hours. Maintain a pH of 6.5-7.5 for fresh, fragrant leaves.",
+        Thyme:
+          "Water thyme every 1-2 weeks, ensuring the soil dries out between waterings. Position in full sunlight for at least 6-8 hours daily. Maintain a pH of 6.5-7 for aromatic growth.",
+        Oregano:
+          "Water oregano weekly, allowing the soil to dry slightly between waterings. Place in full sunlight for 6-8 hours daily. Maintain pH levels of 6.5-7.5 for healthy, flavorful leaves.",
+        Dill: "Water dill every 2 days, ensuring the soil stays slightly moist. Place in partial sunlight for 4-6 hours. Maintain a pH of 5.5-6.5 for tall, fragrant stalks.",
+        "Green Beans":
+          "Water green beans every 2-3 days to keep the soil evenly moist. Position in full sunlight for 6-8 hours daily. Maintain pH levels between 6 and 6.5 for productive vines.",
+        Corn: "Water corn deeply every 3 days, soaking the soil to the roots. Place in full sunlight for 6-10 hours daily. Maintain a pH of 5.8-6.2 for tall, healthy stalks.",
+        Chives:
+          "Water chives every 1-2 days, keeping the soil slightly damp. Position in indirect sunlight for 4-6 hours. Maintain a pH of 6-7 for tender, flavorful shoots.",
+        Potato:
+          "Water potatoes weekly, ensuring deep, even watering. Position in full sunlight for 6-8 hours daily. Maintain a pH of 5-6.5 for robust tubers.",
+        Radish:
+          "Water radishes daily to keep the soil evenly moist. Place in partial sunlight for 4-6 hours. Maintain a pH of 6-7 for crisp, fast-growing roots.",
+        Onion:
+          "Water onions every 1-2 days, keeping the soil lightly moist. Place in full sunlight for 6-8 hours daily. Maintain a pH of 6-6.8 for uniform, flavorful bulbs.",
+        Cabbage:
+          "Water cabbage daily to keep the soil consistently moist. Place in indirect sunlight for 4-6 hours daily. Maintain a pH of 6-7.5 for firm, leafy heads.",
+        Eggplant:
+          "Water eggplant every 2 days, ensuring the soil remains evenly moist. Place in full sunlight for 6-8 hours daily. Maintain a pH of 5.5-6.5 for vibrant, productive plants.",
+        Garlic:
+          "Water garlic every 1-2 weeks, allowing the soil to dry between waterings. Position in full sunlight for at least 6 hours daily. Maintain a pH of 6-7 for flavorful bulbs.",
+        Peas: "Water peas every 2 days, ensuring the soil stays evenly moist. Place in partial sunlight for 4-6 hours daily. Maintain a pH of 6-7.5 for abundant pods.",
+        Pumpkin:
+          "Water pumpkins every 2-3 days to keep the soil evenly moist. Place in full sunlight for at least 6-8 hours daily. Maintain a pH of 6-7 and Potassium levels of 150-250 for robust vines.",
+        Broccoli:
+          "Water broccoli daily, ensuring consistently moist soil. Place in partial sunlight for 4-6 hours. Maintain a pH of 6-6.8 for healthy, compact heads.",
+        Celery:
+          "Water celery every 2 days to keep the soil evenly moist. Place in partial sunlight for 4-6 hours. Maintain a pH of 6-7 for crisp, flavorful stalks.",
+        Kale: "Water kale daily to keep the soil consistently moist. Position in partial sunlight for 4-6 hours daily. Maintain a pH of 6.5-7.5 for tender, nutrient-rich leaves.",
+        Beets:
+          "Water beets 1-2 times per week to maintain evenly moist soil. Place in full sunlight for 6-8 hours daily. Maintain a pH of 6-7 for firm, sweet roots.",
+        Turnip:
+          "Water turnips every 2 days, ensuring the soil remains evenly moist. Place in full sunlight for 6-8 hours daily. Maintain a pH of 6-7.5 for firm, flavorful bulbs.",
+        Cantaloupe:
+          "Water cantaloupe every 2-3 days, ensuring the soil stays evenly moist. Place in full sunlight for at least 6 hours daily. Maintain a pH of 6-6.5 and Potassium levels of 200-300 for sweet, juicy fruit.",
+        Watermelon:
+          "Water watermelons daily, ensuring the soil stays moist but not waterlogged. Place in full sunlight for at least 6 hours daily. Maintain a pH of 5.5-6.5 and Potassium levels of 200-300 for large, sweet fruit.",
+        Raspberry:
+          "Water raspberries weekly, ensuring the soil remains evenly moist. Place in partial sunlight for 4-6 hours daily. Maintain a pH of 6-6.5 for flavorful, juicy berries.",
+        Blackberry:
+          "Water blackberries weekly, allowing the soil to dry between waterings. Position in partial sunlight for 4-6 hours daily. Maintain a pH of 5.5-6.5 for sweet, plump fruit.",
+        Blueberry:
+          "Water blueberries every 2 days, ensuring the soil stays slightly acidic. Place in partial sunlight for 4-6 hours daily. Maintain a pH of 4.5-5.5 for vibrant, juicy berries.",
+      };
+
+      let plantCount = 0;
+
+      document.getElementById("create-plant-btn").onclick = function () {
+        plantCount++;
+        const plantFormsContainer = document.getElementById("plant-forms");
+
+        const newFormContainer = document.createElement("div");
+        newFormContainer.className = "plant-form";
+        newFormContainer.id = `plant-form-${plantCount}`;
+
+        newFormContainer.innerHTML = `
+          <h2>Plant ${plantCount}</h2>
+          <select onchange="showRecommendation(${plantCount})" name="plant-type" required>
+            <option value="" disabled selected>Select Plant</option>
+            ${Object.keys(plantRecommendations)
+              .map((plant) => `<option value="${plant}">${plant}</option>`)
+              .join("")}
+          </select>
+          <div id="recommendation-${plantCount}" class="result"></div>
+          <div class="form-row">
+            <input type="number" name="ph" placeholder="pH" step="1" required />
+            <input type="number" name="nitrogen" placeholder="Nitrogen" step="1" required />
+            <input type="number" name="phosphorus" placeholder="Phosphorus" step="1" required />
+            <input type="number" name="potassium" placeholder="Potassium" step="1" required />
+            <input type="number" name="temperature" placeholder="Temp (°C)" step="1" required />
+            <input type="number" name="humidity" placeholder="Humidity (%)" step="1" required />
+          </div>
+          <button type="button" class="button" onclick="checkPlantHealth(${plantCount})">Check Plant Health</button>
+          <div id="result-${plantCount}" class="result"></div>
+          <button class="delete-button" onclick="deletePlantForm(${plantCount})">Delete Plant</button>
+        `;
+
+        plantFormsContainer.appendChild(newFormContainer);
+      };
+
+      function showRecommendation(plantId) {
+        const select = document.querySelector(`#plant-form-${plantId} select`);
+        const recommendation = plantRecommendations[select.value];
+        document.getElementById(`recommendation-${plantId}`).innerText =
+          recommendation || "No recommendations available.";
+      }
+
+      function checkPlantHealth(plantId) {
+        const form = document.getElementById(`plant-form-${plantId}`);
+        const ph = form.querySelector("input[name='ph']").value;
+        const nitrogen = form.querySelector("input[name='nitrogen']").value;
+        const phosphorus = form.querySelector("input[name='phosphorus']").value;
+        const potassium = form.querySelector("input[name='potassium']").value;
+        const temperature = form.querySelector(
+          "input[name='temperature']"
+        ).value;
+        const humidity = form.querySelector("input[name='humidity']").value;
+
+        const data = {
+          ph: parseFloat(ph),
+          nitrogen: parseFloat(nitrogen),
+          phosphorus: parseFloat(phosphorus),
+          potassium: parseFloat(potassium),
+          temperature: parseFloat(temperature),
+          humidity: parseFloat(humidity),
+        };
+
+        // Send the data to the Flask API endpoint
+        fetch("/predict_health", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            const resultContainer = document.getElementById(
+              `result-${plantId}`
+            );
+            resultContainer.innerHTML = `
+              <strong>Prediction:</strong> ${result.prediction}<br>
+              <strong>Recommendations:</strong><br>
+              ${result.recommendations.replace(/\.\s+/g, ".<br>")}
+            `;
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      function deletePlantForm(id) {
+        const formToDelete = document.getElementById(`plant-form-${id}`);
+        if (formToDelete) formToDelete.remove();
+      }
+
+      function savePlantData(plantId) {
+        const form = document.getElementById(`plant-form-${plantId}`);
+        const name = form.querySelector("select[name='plant-type']").value;
+        const ph = form.querySelector("input[name='ph']").value;
+        const nitrogen = form.querySelector("input[name='nitrogen']").value;
+        const phosphorus = form.querySelector("input[name='phosphorus']").value;
+        const potassium = form.querySelector("input[name='potassium']").value;
+        const temperature = form.querySelector(
+          "input[name='temperature']"
+        ).value;
+        const humidity = form.querySelector("input[name='humidity']").value;
+
+        const data = {
+          name,
+          ph: parseFloat(ph),
+          nitrogen: parseFloat(nitrogen),
+          phosphorus: parseFloat(phosphorus),
+          potassium: parseFloat(potassium),
+          temperature: parseFloat(temperature),
+          humidity: parseFloat(humidity),
+        };
+
+        console.log("Saving Plant Data:", data); // Debugging: Log the data being sent
+
+        fetch("/add_plant", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            console.log("Response from /add_plant:", result); // Debugging: Log server response
+            if (result.success) {
+              alert("Plant saved successfully!");
+            } else {
+              alert("Failed to save plant: " + result.message);
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        fetch("/get_plants")
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              const plants = data.plants;
+              const plantFormsContainer =
+                document.getElementById("plant-forms");
+              plants.forEach((plant) => {
+                const plantForm = document.createElement("div");
+                plantForm.className = "plant-form";
+                plantForm.id = `plant-form-${plant.id}`;
+                plantForm.innerHTML = `
+                  <h2>${plant.name}</h2>
+                  <div class="form-row">
+                    <input type="number" name="ph" placeholder="pH" value="${plant.ph}" disabled />
+                    <input type="number" name="nitrogen" placeholder="Nitrogen" value="${plant.nitrogen}" disabled />
+                    <input type="number" name="phosphorus" placeholder="Phosphorus" value="${plant.phosphorus}" disabled />
+                    <input type="number" name="potassium" placeholder="Potassium" value="${plant.potassium}" disabled />
+                    <input type="number" name="temperature" placeholder="Temp (°C)" value="${plant.temperature}" disabled />
+                    <input type="number" name="humidity" placeholder="Humidity (%)" value="${plant.humidity}" disabled />
+                  </div>
+                  <button class="delete-button" onclick="deletePlant(${plant.id})">Delete Plant</button>
+                `;
+                plantFormsContainer.appendChild(plantForm);
+              });
+            }
+          })
+          .catch((error) => console.error("Error loading plants:", error));
+      });
+
+      function deletePlant(plantId) {
+        fetch(`/delete_plant/${plantId}`, {
+          method: "DELETE",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              document.getElementById(`plant-form-${plantId}`).remove();
+            } else {
+              alert("Failed to delete plant: " + data.message);
+            }
+          })
+          .catch((error) => console.error("Error deleting plant:", error));
+      }
     </script>
   </body>
 </html>

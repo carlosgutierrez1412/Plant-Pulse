@@ -193,7 +193,13 @@
           />
           <span class="icon-label">Analytics</span>
         </div>
-
+<!-- Controls Icon -->
+<div class="icon-container">
+  <img
+    src="{{ url_for('static', filename='images/Controls.svg') }}"
+    alt="Controls"
+    onclick="window.location.href='{{ url_for('controls') }}'"
+  />
         <!-- Settings Icon -->
         <div class="icon-container">
           <img
