@@ -260,6 +260,10 @@
       };
 
       const plantRecommendations = {
+        Cuphea:
+          "Water Cuphea every 2-3 days to keep the soil evenly moist. Position in full to partial sunlight for at least 6 hours daily. Maintain a soil pH of 5.5-7.5 for vibrant blooms.",
+        Pentas:
+          "Water Pentas every 2-3 days, ensuring the soil stays consistently moist. Place in full sunlight for 6-8 hours daily. Maintain a soil pH of 6-7 for optimal flowering and lush foliage.",
         Sunflower:
           "Water sunflowers every 2-3 days to keep the soil consistently moist. Ensure they are exposed to direct sunlight for at least 6-8 hours daily. Maintain soil pH levels between 6 and 7.5, and ensure Potassium levels are between 150-250 for optimal growth.",
         Tomato:
@@ -346,12 +350,7 @@
 
         newFormContainer.innerHTML = `
           <h2>Plant ${plantCount}</h2>
-          <select onchange="showRecommendation(${plantCount})" name="plant-type" required>
-            <option value="" disabled selected>Select Plant</option>
-            ${Object.keys(plantRecommendations)
-              .map((plant) => `<option value="${plant}">${plant}</option>`)
-              .join("")}
-          </select>
+          <input type="text" placeholder="Enter Plant Name" name="plant-name" oninput="showRecommendation(${plantCount})" required />
           <div id="recommendation-${plantCount}" class="result"></div>
           <div class="form-row">
             <input type="number" name="ph" placeholder="pH" step="1" required />
@@ -370,10 +369,12 @@
       };
 
       function showRecommendation(plantId) {
-        const select = document.querySelector(`#plant-form-${plantId} select`);
-        const recommendation = plantRecommendations[select.value];
+        const input = document.querySelector(
+          `#plant-form-${plantId} input[name='plant-name']`
+        );
+        const recommendation = plantRecommendations[input.value.trim()];
         document.getElementById(`recommendation-${plantId}`).innerText =
-          recommendation || "No recommendations available.";
+          recommendation || "No recommendations available for this plant.";
       }
 
       function checkPlantHealth(plantId) {
