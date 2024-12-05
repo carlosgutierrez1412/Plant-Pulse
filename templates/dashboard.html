@@ -162,7 +162,7 @@
     </style>
   </head>
   <body>
-    <h1>{{ username }}'s Dashboard</h1>
+    <h1>{{ username }}'s Garden Dashboard</h1>
     <div class="container">
       <div class="card">
         <h2>Environmental Conditions</h2>
@@ -307,6 +307,38 @@
           })
           .catch((error) => console.error("Logout error:", error));
       };
+
+      // Function to generate random numbers within a range
+      function getRandomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      // Function to update dashboard values
+      function updateDashboardValues() {
+        // Environmental Conditions
+        document.getElementById("humidity").innerText =
+          getRandomInRange(40, 80).toFixed(1) + " %";
+        document.getElementById("temperature").innerText =
+          getRandomInRange(15, 35).toFixed(1) + " °C";
+
+        // Soil Nutrients
+        document.getElementById("ph").innerText = getRandomInRange(
+          5.5,
+          7.5
+        ).toFixed(2);
+        document.getElementById("nitrogen").innerText =
+          getRandomInRange(50, 150).toFixed(1) + " mg/L";
+        document.getElementById("phosphorus").innerText =
+          getRandomInRange(20, 80).toFixed(1) + " mg/L";
+        document.getElementById("potassium").innerText =
+          getRandomInRange(100, 300).toFixed(1) + " mg/L";
+      }
+
+      // Call the update function every 10 seconds
+      setInterval(updateDashboardValues, 10000);
+
+      // Initial call to populate the values on page load
+      updateDashboardValues();
     </script>
   </body>
 </html>

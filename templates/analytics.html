@@ -507,6 +507,37 @@
           })
           .catch((error) => console.error("Error deleting plant:", error));
       }
+
+      // Function to update analytics values
+      function updateAnalyticsValues() {
+        const plantForms = document.querySelectorAll(".plant-form");
+        plantForms.forEach((form) => {
+          form.querySelector("input[name='ph']").value = getRandomInRange(
+            5.5,
+            7.5
+          ).toFixed(2);
+          form.querySelector("input[name='nitrogen']").value = getRandomInRange(
+            50,
+            150
+          ).toFixed(1);
+          form.querySelector("input[name='phosphorus']").value =
+            getRandomInRange(20, 80).toFixed(1);
+          form.querySelector("input[name='potassium']").value =
+            getRandomInRange(100, 300).toFixed(1);
+          form.querySelector("input[name='temperature']").value =
+            getRandomInRange(15, 35).toFixed(1);
+          form.querySelector("input[name='humidity']").value = getRandomInRange(
+            40,
+            80
+          ).toFixed(1);
+        });
+      }
+
+      // Call the update function every 10 seconds
+      setInterval(updateAnalyticsValues, 10000);
+
+      // Initial call to populate the values on page load
+      updateAnalyticsValues();
     </script>
   </body>
 </html>
